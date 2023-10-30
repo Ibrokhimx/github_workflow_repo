@@ -29,8 +29,8 @@
             TF_VAR_IMAGE_ID: "ami-09d95fab7fff3776c"
             TF_VAR_INSTANCE_TYPE: "t2.micro"
             TF_VAR_KEY_NAME: ${{ secrets.MY_AWS_ACCESS_KEY_ID }}
-            args: '-var-file="dev.tfvars"'
             run: terraform plan -var-file="var.tfvars" 
+              args: '-var-file="dev.tfvars"'
         - name: Terraform Apply
           uses: hashicorp/terraform-github-actions/apply@v0.4.0
           env:
