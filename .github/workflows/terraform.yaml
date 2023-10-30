@@ -21,9 +21,9 @@
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             run: terraform init -varfile=var.tfvars -input=false
-          #id: fmt
-#         run: terraform fmt -check
-#         continue-on-error: true 
+          id: fmt
+          run: terraform fmt -check
+            continue-on-error: true 
         - name: Terrafor Plan
           uses: hashicorp/terraform-github-actions/plan@v0.3.7
           env:
