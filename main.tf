@@ -18,7 +18,7 @@ resource "aws_instance" "example" {
 }
 resource "aws_key_pair" "my_key_pair" {
   key_name   = var.key_name
-  public_key = file("MY_AWS_ACCESS_KEY_ID")
+  public_key = var.key_name
 }
 resource "aws_security_group" "instance" {
   name = "terraform-example-instance"
