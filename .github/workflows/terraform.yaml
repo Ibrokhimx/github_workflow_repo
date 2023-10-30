@@ -1,0 +1,65 @@
+name: 'Terraform'
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+# permissions:
+#   contents: read
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    steps:
+    - uses: hashicorp/setup-terraform@v2
+     with:
+        cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
+
+    - name: Terraform fmt
+         id: fmt
+        run: terraform fmt -check
+        continue-on-error: true    
+    - name: Terraform Init
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    run: terraform init  -input=false
+    - name: Terraform Plan
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: terraform plan -varfile=var.tfvars -input=false
+      - run: echo ${{ steps.plan.outputs.stdout }}
+      - run: echo ${{ steps.plan.outputs.stderr }}
+      - run: echo ${{ steps.plan.outputs.exitcode }}
+    
+    - name: Terraform Apply
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: terraform apply -varfile=var.tfvars -auto-approve -input=false
+      - run: echo ${{ steps.apply.outputs.stdout }}
+      - run: echo ${{ steps.apply.outputs.stderr }}
+      - run: echo ${{ steps.apply.outputs.exitcode }}
+# steps:
+#     - uses: hashicorp/setup-terraform@v2
+
+# steps:
+# - uses: hashicorp/setup-terraform@v2
+#   with:
+#     terraform_version: "1.1.7"
+
