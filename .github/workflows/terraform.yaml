@@ -1,80 +1,111 @@
-name: 'Terraform'
+name: Deploy Infrastructure
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-
-permissions:
-  contents: read
-
+    branches:
+      - main
 
 jobs:
-   
-  terraform:
-    name: 'Terraform'
+  tf_fmt:
+    name: Terra-exmp
     runs-on: ubuntu-latest
-    environment: production
+    steps:
+      - uses: hashicorp/setup-terraform@v2
+      with:
+        cli_config_credentials_hostname: 'terraform.example.com'
+        cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
+    - name: Checkout Repo
+      uses: actions/checkout@v1
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-
-    steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
-    
-    steps:
-    - name: Install Terraform
-      run: |
-        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-        sudo apt update && sudo apt install terraform
-    # steps:
-    #         - uses: hashicorp/setup-terraform@v5
-    #          with:
-    #             cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
-    steps:
-    
-    - name: Terraform fmt
-        #id: fmt
-        run: terraform fmt -check
-        continue-on-error: true    
     - name: Terraform Init
-    with:
-        cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    run: terraform init  -input=false
-    - name: Terraform Plan
-    with:
-        cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
+      uses: hashicorp/terraform-github-actions/init@v0.4.0
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: terraform plan -varfile=var.tfvars -input=false
-      - run: echo ${{ steps.plan.outputs.stdout }}
-      - run: echo ${{ steps.plan.outputs.stderr }}
-      - run: echo ${{ steps.plan.outputs.exitcode }}
-    
-    - name: Terraform Apply
-    with:
-        cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: terraform apply -varfile=var.tfvars -auto-approve -input=false
-      - run: echo ${{ steps.apply.outputs.stdout }}
-      - run: echo ${{ steps.apply.outputs.stderr }}
-      - run: echo ${{ steps.apply.outputs.exitcode }}
-# steps:
-#     - uses: hashicorp/setup-terraform@v2
+        TF_ACTION_WORKING_DIR: 'terraform'
+        AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-# steps:
-# - uses: hashicorp/setup-terraform@v2
-#   with:
-#     terraform_version: "1.1.7"
+    - name: Terraform Validate
+      uses: hashicorp/terraform-github-actions/validate@v0.3.7
+
+    - name: Terraform Apply
+      uses: hashicorp/terraform-github-actions/apply@v0.4.0
+      env:
+        TF_ACTION_WORKING_DIR: 'terraform'
+        AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+
+# on:
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+
+# permissions:
+#   contents: read
+
+
+# jobs:
+#     name: 'Terraform'
+#     runs-on: ubuntu-latest
+#     environment: production
+
+#     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+#     defaults:
+#       run:
+#         shell: bash
+
+#     steps:
+#     # Checkout the repository to the GitHub Actions runner
+#     - name: Checkout
+#       uses: actions/checkout@v3
+    
+#     # steps:
+#     # - name: Install Terraform
+#     #   run: |
+#     #     wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+#     #     echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+#     #     sudo apt update && sudo apt install terraform
+#     steps:
+#     - uses: hashicorp/setup-terraform@v2
+#         with:
+#         cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
+#     - name: Terraform fmt
+#         #id: fmt
+#         run: terraform fmt -check
+#         continue-on-error: true    
+#     - name: Terraform Init
+#     with:
+#         cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
+#     env:
+#       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#     run: terraform init  -input=false
+#     - name: Terraform Plan
+#     with:
+#         cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
+#       env:
+#         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#       run: terraform plan -varfile=var.tfvars -input=false
+#       - run: echo ${{ steps.plan.outputs.stdout }}
+#       - run: echo ${{ steps.plan.outputs.stderr }}
+#       - run: echo ${{ steps.plan.outputs.exitcode }}
+    
+#     - name: Terraform Apply
+#     with:
+#         cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
+#       env:
+#         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#       run: terraform apply -varfile=var.tfvars -auto-approve -input=false
+#       - run: echo ${{ steps.apply.outputs.stdout }}
+#       - run: echo ${{ steps.apply.outputs.stderr }}
+#       - run: echo ${{ steps.apply.outputs.exitcode }}
+# # steps:
+# #     - uses: hashicorp/setup-terraform@v2
+
+# # steps:
+# # - uses: hashicorp/setup-terraform@v2
+# #   with:
+# #     terraform_version: "1.1.7"
 
