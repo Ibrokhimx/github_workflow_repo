@@ -8,12 +8,13 @@ on:
 permissions:
   contents: read
 
-steps:
-    - uses: hashicorp/setup-terraform@v5
-     with:
-        cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
 
 jobs:
+    steps:
+        - uses: hashicorp/setup-terraform@v5
+         with:
+            cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
+    
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
@@ -28,7 +29,19 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
-        
+    
+    steps:
+    - name: Install Terraform
+      run: |
+        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+        sudo apt update && sudo apt install terraform
+    steps:
+            - uses: hashicorp/setup-terraform@v5
+             with:
+                cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
+    steps:
+    
     - name: Terraform fmt
          id: fmt
         run: terraform fmt -check
