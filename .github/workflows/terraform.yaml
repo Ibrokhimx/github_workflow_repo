@@ -5,8 +5,13 @@ on:
     branches: [ "main" ]
   pull_request:
 
-# permissions:
-#   contents: read
+permissions:
+  contents: read
+
+steps:
+    - uses: hashicorp/setup-terraform@v5
+     with:
+        cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
 
 jobs:
   terraform:
@@ -23,12 +28,7 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
-    
-    steps:
-    - uses: hashicorp/setup-terraform@v2
-     with:
-        cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
-
+        
     - name: Terraform fmt
          id: fmt
         run: terraform fmt -check
