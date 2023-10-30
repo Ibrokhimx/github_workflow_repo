@@ -10,11 +10,7 @@ permissions:
 
 
 jobs:
-    steps:
-        - uses: hashicorp/setup-terraform@v5
-         with:
-            cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
-    
+   
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
