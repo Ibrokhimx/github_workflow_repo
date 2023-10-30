@@ -23,7 +23,7 @@
             run: terraform init -varfile=var.tfvars -input=false
           id: fmt
           run: terraform fmt -check
-            continue-on-error: true 
+          continue-on-error: true 
         - name: Terrafor Plan
           uses: hashicorp/terraform-github-actions/plan@v0.3.7
           env:
