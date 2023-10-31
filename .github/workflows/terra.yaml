@@ -25,6 +25,6 @@ jobs:
       - name: Run Terraform Plan
         run: terraform plan
         working-directory: ./oct-31
-    - name: Run Terraform Init
+      - name: Run Terraform Init
         run: terraform init -auto-approve
         working-directory: ./oct-31
