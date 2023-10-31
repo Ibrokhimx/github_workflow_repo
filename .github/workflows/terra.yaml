@@ -21,10 +21,10 @@ jobs:
           cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
       - name: Run Terraform Init
         run: terraform init
-        working-directory: ./oct-31
+        working-directory: .
       - name: Run Terraform Plan
-        run: terraform plan
-        working-directory: ./oct-31
+        run: terraform plan -var-file var.tfvars
+        working-directory: .
       - name: Run Terraform Apply
-        run: terraform apply
-        working-directory: ./oct-31
+        run: terraform apply -var-file var.tfvars
+        working-directory: .
