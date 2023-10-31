@@ -1,6 +1,6 @@
 terraform {
   cloud {
-    organization = "024_2023-summer-cloud"
+    organization = "pitt412"
 
     workspaces {
       name = "oct-31-lab"
