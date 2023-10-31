@@ -18,8 +18,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v2
         with:
-            cli_config_credentials_hostname: terraform.example.com
-            cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
+          cli_config_credentials_token: ${{ secrets.MY_NEW_TF_TOKEN }}
       - name: Run Terraform Init
         run: terraform init
         working-directory: ./oct-31
