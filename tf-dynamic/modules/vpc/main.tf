@@ -13,6 +13,6 @@ variable "vpc_cidr" {
   type = string
 }
 
-output "bambams_vpc_id" {
+output "dynamic_vpc_id" {
   value = aws_vpc.dynamic.id
 }

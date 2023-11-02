@@ -27,7 +27,7 @@ module "vpc" {
 
 module "subnets" {
   source = "./modules/subnet/"
-  dynamic = module.vpc.dynamics_vpc_id
+  dynamic = module.vpc.dynamic_vpc_id
   prefix = local.prefix
   subnets = {
     my_first_subnet_using_module = {
@@ -48,5 +48,5 @@ module "subnets" {
 module "security" {
   source          = "./modules/security_groups"
   security_groups = var.security_groups
-  vpc_id          = module.vpc.vpc_id
+  vpc_id          = module..dynamic.id
 }

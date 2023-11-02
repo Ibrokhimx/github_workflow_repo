@@ -47,14 +47,14 @@ security_groups = {
         cidr_blocks = ["10.0.0.0/16"]
       }
     ]
-    # egress_rules = [
-    #   {
-    #     priority    = 501
-    #     from_port   = 0
-    #     to_port     = 65535
-    #     protocol    = "tcp"
-    #     cidr_blocks = ["0.0.0.0/0"]
-    #   }
-    # ]
+    egress_rules = [
+      {
+        priority    = 501
+        from_port   = 0
+        to_port     = 65535
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+      }
+    ]
   }
 }  
