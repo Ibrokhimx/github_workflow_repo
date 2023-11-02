@@ -1,6 +1,7 @@
 resource "aws_instance" "example" {
   ami                    = var.image_id
   instance_type          = var.instance_type
+  key_name = "ec2lab1key"
   vpc_security_group_ids = [aws_security_group.instance.id, aws_security_group.ssh.id]
 
   user_data = <<-EOF
@@ -14,12 +15,12 @@ resource "aws_instance" "example" {
   tags = {
     Name = "terraform-example"
   }
-  key_name = var.key_name
+
 }
-resource "aws_key_pair" "my_key_pair" {
-  key_name   = var.key_name
-  public_key = var.key_name
-}
+# resource "aws_key_pair" "my_key_pair" {
+#   key_name   = var.key_name
+#   public_key = var.key_name
+# }
 resource "aws_security_group" "instance" {
   name = "terraform-example-instance"
   ingress {
