@@ -52,7 +52,12 @@ module "security_groups" {
   security_groups = var.security_groups
   vpc_id          = aws_vpc.main.id
 }
-
+module "security-groups" {
+  source  = "app.terraform.io/pitt412/security-groups/aws"
+  version = "1.0.0"
+  vpc_id          = aws_vpc.main.id
+  security_groups = var.security_groups
+}
 resource "aws_instance" "main" {
   ami           = "ami-0df435f331839b2d6"
   instance_type = "t2.micro"
